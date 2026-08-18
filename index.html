@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+  
+  <!-- SEO -->
+  <title>CardSaver — 30+ Pakistani Bank Card & Wallet Deals</title>
+  <meta name="description" content="Discover 100+ exclusive deals and discounts on your Pakistani bank debit & credit cards, SadaPay, NayaPay, Easypaisa & JazzCash. HBL, UBL, Meezan, MCB & 25+ banks.">
+  <meta name="keywords" content="Pakistan bank deals, SadaPay discounts, NayaPay deals, Easypaisa offers, JazzCash deals, HBL discounts, UBL card deals, Meezan deals">
+  <meta name="author" content="CardSaver.pk">
+  <meta name="robots" content="index, follow">
+
+  <!-- PWA Meta -->
+  <meta name="theme-color" content="#FFFFFF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="CardSaver">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="CardSaver">
+  <meta name="msapplication-TileColor" content="#007AFF">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Favicon & Apple Touch Icon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23007AFF'/><text x='50' y='65' text-anchor='middle' font-size='50' fill='white'>💳</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='36' fill='%23007AFF'/><text x='90' y='115' text-anchor='middle' font-size='90' fill='white'>💳</text></svg>">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="CardSaver — 30+ Pakistani Bank Card Deals">
+  <meta property="og:description" content="Find exclusive deals on your Pakistani bank cards & digital wallets. Restaurants, groceries, fashion, electronics & more.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cardsaver.pk">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+  <!-- Splash Screen -->
+  <div class="splash-screen" id="splash-screen">
+    <div class="splash-logo">
+      <div class="splash-logo__icon">
+        <svg viewBox="0 0 48 48" fill="none" width="52" height="52">
+          <rect x="6" y="14" width="36" height="22" rx="3" fill="white" opacity="0.9"/>
+          <rect x="6" y="14" width="36" height="7" fill="white" opacity="0.5"/>
+          <circle cx="14" cy="28" r="3" fill="white" opacity="0.6"/>
+          <rect x="24" y="26" width="14" height="2" rx="1" fill="white" opacity="0.4"/>
+          <rect x="24" y="30" width="10" height="2" rx="1" fill="white" opacity="0.3"/>
+        </svg>
+      </div>
+      <div class="splash-logo__name">CardSaver</div>
+      <div class="splash-logo__tagline">Every swipe saves you more</div>
+    </div>
+  </div>
+
+  <!-- App Shell -->
+  <div id="app">
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Page Content -->
+    <div class="page-content" id="page-content"></div>
+
+    <!-- Tab Bar -->
+    <nav class="tab-bar" id="tab-bar" style="display: none;" role="navigation" aria-label="Main navigation">
+      <button class="tab-bar__item" data-tab="home" onclick="App.navigateTo('#/')" aria-label="Home">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"/>
+        </svg>
+        <span>Home</span>
+      </button>
+      <button class="tab-bar__item" data-tab="deals" onclick="Deals.activeFilters = {}; App.navigateTo('#/deals')" aria-label="Deals">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+          <line x1="7" y1="7" x2="7.01" y2="7"/>
+        </svg>
+        <span>Deals</span>
+      </button>
+      <button class="tab-bar__item" data-tab="wallet" onclick="App.navigateTo('#/wallet')" aria-label="Wallet">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="5" width="20" height="14" rx="2"/>
+          <path d="M2 10h20"/>
+        </svg>
+        <span>Wallet</span>
+      </button>
+      <button class="tab-bar__item" data-tab="groups" onclick="App.navigateTo('#/groups')" aria-label="Groups">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+          <path d="M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+        <span>Groups</span>
+      </button>
+      <button class="tab-bar__item" data-tab="profile" onclick="App.navigateTo('#/profile')" aria-label="Profile">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="js/utils.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/wallet.js"></script>
+  <script src="js/deals.js"></script>
+  <script src="js/groups.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Register Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('SW registered:', reg.scope))
+          .catch(err => console.log('SW registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
