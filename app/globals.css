@@ -71,7 +71,7 @@
   --duration-slow: 400ms;
   --duration-slower: 600ms;
 
-  --container-max: 480px;
+  --container-max: 1200px;
   --header-height: 56px;
   --tab-bar-height: 84px;
   --card-aspect: 1.586;
@@ -199,6 +199,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  max-width: var(--container-max);
+  margin: 0 auto;
 }
 
 .page-content {
@@ -262,7 +264,7 @@ input::placeholder, textarea::placeholder { color: var(--text-tertiary); }
 .font-bold { font-weight: var(--weight-bold); }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* ── 3. Components & Utility Classes ── */
+/* ── 3. Components & Responsive Layouts ── */
 .peekaboo-cat-scroll { display: flex; gap: var(--space-3); overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 var(--space-5); scrollbar-width: none; margin-bottom: var(--space-6); }
 .peekaboo-cat-scroll::-webkit-scrollbar { display: none; }
 .peekaboo-cat-card { flex-shrink: 0; width: 140px; border-radius: var(--radius-xl); background: var(--bg-elevated); box-shadow: var(--shadow-sm); overflow: hidden; scroll-snap-align: start; transition: transform var(--duration-fast); cursor: pointer; border: 1px solid var(--separator); }
@@ -273,13 +275,29 @@ input::placeholder, textarea::placeholder { color: var(--text-tertiary); }
 .peekaboo-cat-card__places { font-size: 11px; color: var(--text-secondary); }
 .peekaboo-cat-card__deals { font-size: 11px; font-weight: var(--weight-semibold); color: var(--accent-green); margin-top: 1px; }
 
-.bank-partner-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); padding: 0 var(--space-5); margin-bottom: var(--space-6); }
-@media (min-width: 600px) { .bank-partner-grid { grid-template-columns: repeat(5, 1fr); } }
+.bank-partner-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: var(--space-3); padding: 0 var(--space-5); margin-bottom: var(--space-6); }
 .bank-partner-card { background: #E8ECEF; border-radius: var(--radius-lg); padding: var(--space-4) var(--space-2); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; transition: transform var(--duration-fast); cursor: pointer; }
 [data-theme="dark"] .bank-partner-card { background: #2C2C2E; }
 .bank-partner-card:active { transform: scale(0.94); }
 .bank-partner-card__icon { width: 52px; height: 52px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; color: white; margin-bottom: var(--space-2); box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
 .bank-partner-card__name { font-size: 11px; font-weight: var(--weight-semibold); color: var(--text-primary); line-height: 1.2; }
+
+/* Deals Catalog Grid & Scroll */
+.deals-page__grid { display: grid; grid-template-columns: 1fr; gap: var(--space-4); padding: 0 var(--space-5); }
+@media (min-width: 640px) {
+  .deals-page__grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-5); }
+}
+@media (min-width: 1024px) {
+  .deals-page__grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+}
+
+.deals-page__filter-scroll { display: flex; gap: var(--space-2); overflow-x: auto; padding: 0 var(--space-5); scrollbar-width: none; flex-wrap: nowrap; }
+.deals-page__filter-scroll::-webkit-scrollbar { display: none; }
+
+/* Admin Nav Tabs Styling */
+.peekaboo-nav-tabs { display: flex; gap: var(--space-3); flex-wrap: wrap; padding: 0 var(--space-5); margin-bottom: var(--space-4); }
+.peekaboo-tab { padding: 10px 18px; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: var(--weight-semibold); background: var(--fill-tertiary); color: var(--text-secondary); transition: all var(--duration-fast); border: 1px solid var(--separator); cursor: pointer; }
+.peekaboo-tab.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3); }
 
 .app-header { position: sticky; top: 0; z-index: var(--z-sticky); padding: var(--space-3) var(--space-5); background: var(--surface-glass); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-bottom: 0.5px solid var(--surface-glass-border); min-height: var(--header-height); display: flex; align-items: center; justify-content: space-between; }
 .app-header__icon-btn { width: 36px; height: 36px; border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; background: var(--fill-tertiary); transition: all var(--duration-fast); position: relative; }
@@ -357,13 +375,15 @@ input::placeholder, textarea::placeholder { color: var(--text-tertiary); }
 .bank-card--easypaisa { background: linear-gradient(135deg, #4CAF50, #388E3C, #1B5E20); }
 .bank-card--jazzcash { background: linear-gradient(135deg, #E53935, #C62828, #8E0000); }
 
-.deal-card { background: var(--bg-elevated); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; transition: all var(--duration-normal); cursor: pointer; }
+.deal-card { background: var(--bg-elevated); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; transition: all var(--duration-normal); cursor: pointer; height: 100%; display: flex; flex-direction: column; }
 .deal-card:active { transform: scale(0.97); }
-.deal-card__hero { position: relative; height: 140px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.deal-card__hero { position: relative; height: 150px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .deal-card__hero-gradient { position: absolute; inset: 0; opacity: 0.12; }
 .deal-card__merchant-icon { width: 60px; height: 60px; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: var(--text-2xl); font-weight: var(--weight-heavy); color: white; position: relative; z-index: 2; box-shadow: var(--shadow-md); object-fit: cover; }
 .deal-card__discount-badge { position: absolute; top: var(--space-3); right: var(--space-3); background: var(--accent-red); color: white; padding: var(--space-1) var(--space-3); border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: var(--weight-bold); z-index: 2; }
-.deal-card__body { padding: var(--space-4); }
+.deal-card__body { padding: var(--space-4); flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+.deal-card__merchant { font-size: var(--text-base); font-weight: var(--weight-bold); color: var(--text-primary); margin-bottom: 4px; }
+.deal-card__description { font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.4; }
 
 .chip { display: inline-flex; align-items: center; gap: var(--space-1); padding: var(--space-2) var(--space-3); border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: var(--weight-medium); background: var(--fill-tertiary); color: var(--text-primary); cursor: pointer; white-space: nowrap; }
 .chip.active { background: var(--accent-blue); color: var(--text-on-accent); }
