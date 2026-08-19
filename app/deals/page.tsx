@@ -3,7 +3,7 @@ import DealCard from '@/components/DealCard';
 import Link from 'next/link';
 import { fallbackCategories, fallbackBanks, fallbackDeals } from '@/lib/fallbackData';
 
-export const revalidate = 0;
+export const revalidate = 60; // Pre-render statically at build time & revalidate every 60s
 
 interface DealsPageProps {
   searchParams: {

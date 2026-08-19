@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import DealCard from '@/components/DealCard';
 import { fallbackCategories, fallbackBanks, fallbackDeals } from '@/lib/fallbackData';
 
-export const revalidate = 0; // Dynamic server rendering
+export const revalidate = 60; // Pre-render statically at build time & revalidate every 60s
 
 export default async function HomePage() {
   let categories: any[] = [];
