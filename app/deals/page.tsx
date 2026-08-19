@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import DealCard from '@/components/DealCard';
 import Link from 'next/link';
+import { fallbackCategories, fallbackBanks, fallbackDeals } from '@/lib/fallbackData';
 
 export const revalidate = 0;
 
@@ -16,18 +17,38 @@ interface DealsPageProps {
 }
 
 export default async function DealsPage({ searchParams }: DealsPageProps) {
-  const categories = await prisma.category.findMany();
-  const banks = await prisma.bank.findMany();
+  let categories: any[] = [];
+  let banks: any[] = [];
+  let allDeals: any[] = [];
+
+  try {
+    categories = await prisma.category.findMany();
+  } catch (e) {
+    categories = [];
+  }
+  if (!categories || categories.length === 0) categories = fallbackCategories;
+
+  try {
+    banks = await prisma.bank.findMany();
+  } catch (e) {
+    banks = [];
+  }
+  if (!banks || banks.length === 0) banks = fallbackBanks;
+
+  try {
+    allDeals = await prisma.deal.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch (e) {
+    allDeals = [];
+  }
+  if (!allDeals || allDeals.length === 0) allDeals = fallbackDeals;
 
   const activeCat = searchParams.category;
   const activeBank = searchParams.bank;
   const activeCity = searchParams.city;
   const activeBogo = searchParams.bogo === 'true';
   const searchQuery = searchParams.search?.toLowerCase();
-
-  let allDeals = await prisma.deal.findMany({
-    orderBy: { createdAt: 'desc' },
-  });
 
   if (activeCat) {
     allDeals = allDeals.filter(d => d.category === activeCat);

@@ -1,22 +1,48 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import DealCard from '@/components/DealCard';
+import { fallbackCategories, fallbackBanks, fallbackDeals } from '@/lib/fallbackData';
 
 export const revalidate = 0; // Dynamic server rendering
 
 export default async function HomePage() {
-  const categories = await prisma.category.findMany();
-  const banks = await prisma.bank.findMany({ take: 16 });
-  const allDeals = await prisma.deal.findMany({ orderBy: { createdAt: 'desc' }, take: 20 });
+  let categories: any[] = [];
+  let banks: any[] = [];
+  let allDeals: any[] = [];
+  let userCards: any[] = [];
+
+  try {
+    categories = await prisma.category.findMany();
+  } catch (e) {
+    console.error('Prisma categories error:', e);
+  }
+  if (!categories || categories.length === 0) categories = fallbackCategories;
+
+  try {
+    banks = await prisma.bank.findMany({ take: 16 });
+  } catch (e) {
+    console.error('Prisma banks error:', e);
+  }
+  if (!banks || banks.length === 0) banks = fallbackBanks;
+
+  try {
+    allDeals = await prisma.deal.findMany({ orderBy: { createdAt: 'desc' }, take: 30 });
+  } catch (e) {
+    console.error('Prisma deals error:', e);
+  }
+  if (!allDeals || allDeals.length === 0) allDeals = fallbackDeals;
+
+  try {
+    const user = await prisma.user.findFirst({
+      where: { email: 'user@cardsaver.pk' },
+      include: { cards: true }
+    });
+    userCards = user?.cards || [];
+  } catch (e) {
+    userCards = [];
+  }
+
   const trendingDeals = allDeals.filter(d => d.trending);
-
-  // User wallet cards
-  const user = await prisma.user.findFirst({
-    where: { email: 'user@cardsaver.pk' },
-    include: { cards: true }
-  });
-
-  const userCards = user?.cards || [];
   const userBankIds = userCards.map(c => c.bank);
 
   const matchingDeals = allDeals.filter(deal => {
@@ -82,7 +108,7 @@ export default async function HomePage() {
         ))}
       </div>
 
-      {/* 🏦 16 Partner Banks Grid */}
+      {/* 🏦 Partner Banks Grid */}
       <div className="section-header">
         <div className="section-header__title">Partner Banks & EMIs ({banks.length})</div>
         <Link href="/wallet" className="section-header__action">Add Card +</Link>
