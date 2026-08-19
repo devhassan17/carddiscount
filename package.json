@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && prisma db push && node prisma/seed.js && next build",
     "start": "next start",
     "lint": "next lint",
-    "db:seed": "node --loader ts-node/register prisma/seed.ts",
+    "db:seed": "node prisma/seed.js",
     "postinstall": "prisma generate"
   },
   "dependencies": {
