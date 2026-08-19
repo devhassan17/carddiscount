@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface HeaderProps {
   userName?: string;
@@ -11,6 +11,7 @@ interface HeaderProps {
 
 export default function Header({ userName = 'Ali Hassan', unreadCount = 2 }: HeaderProps) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -29,6 +30,15 @@ export default function Header({ userName = 'Ali Hassan', unreadCount = 2 }: Hea
       .slice(0, 2);
   };
 
+  const navLinks = [
+    { label: 'Home', href: '/' },
+    { label: 'Deals', href: '/deals' },
+    { label: 'Wallet', href: '/wallet' },
+    { label: 'Groups', href: '/groups' },
+    { label: 'Profile', href: '/profile' },
+    { label: 'Admin', href: '/admin' },
+  ];
+
   return (
     <div className="app-header">
       <div className="flex gap-3" style={{ alignItems: 'center' }}>
@@ -46,7 +56,23 @@ export default function Header({ userName = 'Ali Hassan', unreadCount = 2 }: Hea
         </div>
       </div>
 
-      <div className="flex gap-2">
+      {/* Desktop Top Navigation Links */}
+      <div className="desktop-header-nav">
+        {navLinks.map((item) => {
+          const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`desktop-header-nav__link ${isActive ? 'active' : ''}`}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
+      </div>
+
+      <div className="flex gap-2" style={{ alignItems: 'center' }}>
         <button
           className="app-header__icon-btn"
           onClick={() => router.push('/search')}
