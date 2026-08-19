@@ -1,0 +1,57 @@
+{
+  "name": "CardSaver — Bank Card Deals Pakistan",
+  "short_name": "CardSaver",
+  "description": "Discover exclusive deals and discounts on your Pakistani bank debit & credit cards across restaurants, supermarkets, and electronics stores.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#007AFF",
+  "background_color": "#000000",
+  "categories": ["finance", "shopping", "lifestyle"],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='102' fill='%23007AFF'/><rect x='96' y='160' width='320' height='200' rx='24' fill='white' opacity='0.9'/><rect x='96' y='160' width='320' height='64' fill='white' opacity='0.5'/><circle cx='160' cy='296' r='24' fill='white' opacity='0.6'/><rect x='224' y='280' width='160' height='16' rx='8' fill='white' opacity='0.4'/><rect x='224' y='312' width='112' height='16' rx='8' fill='white' opacity='0.3'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='102' fill='%23007AFF'/><rect x='96' y='160' width='320' height='200' rx='24' fill='white' opacity='0.9'/><rect x='96' y='160' width='320' height='64' fill='white' opacity='0.5'/><circle cx='160' cy='296' r='24' fill='white' opacity='0.6'/><rect x='224' y='280' width='160' height='16' rx='8' fill='white' opacity='0.4'/><rect x='224' y='312' width='112' height='16' rx='8' fill='white' opacity='0.3'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='38' fill='%23007AFF'/><rect x='36' y='60' width='120' height='76' rx='10' fill='white' opacity='0.9'/><rect x='36' y='60' width='120' height='24' fill='white' opacity='0.5'/><circle cx='60' cy='112' r='9' fill='white' opacity='0.6'/><rect x='84' y='106' width='56' height='6' rx='3' fill='white' opacity='0.4'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Browse Deals",
+      "short_name": "Deals",
+      "description": "Browse all available deals and discounts",
+      "url": "./index.html#/deals"
+    },
+    {
+      "name": "My Wallet",
+      "short_name": "Wallet",
+      "description": "View and manage your bank cards",
+      "url": "./index.html#/wallet"
+    },
+    {
+      "name": "My Groups",
+      "short_name": "Groups",
+      "description": "View your deal-sharing groups",
+      "url": "./index.html#/groups"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

@@ -1,0 +1,153 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  city      String   @default("Karachi")
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cards            Card[]
+  groups           GroupMember[]
+  notifications    Notification[]
+  followedBrands   FollowedMerchant[]
+}
+
+model Card {
+  id        String   @id @default(uuid())
+  userId    String
+  bank      String
+  bankName  String
+  type      String
+  tier      String   @default("Classic")
+  last4     String   @default("4321")
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Bank {
+  id        String @id
+  name      String
+  fullName  String
+  color     String
+  type      String
+  cssClass  String
+}
+
+model Category {
+  id          String @id
+  name        String
+  emoji       String
+  placesCount String
+  dealsCount  String
+  image       String
+  color       String
+  bgColor     String
+}
+
+model Merchant {
+  id            String   @id @default(uuid())
+  name          String   @unique
+  logo          String
+  banner        String
+  description   String
+  rating        Float    @default(4.2)
+  reviewCount   Int      @default(10)
+  branchesCount Int      @default(1)
+  dealsCount    Int      @default(1)
+  phone         String?
+  socialJson    String?
+  menuJson      String?
+  reviewsJson   String?
+  branchesJson  String?
+  createdAt     DateTime @default(now())
+}
+
+model Deal {
+  id              String   @id @default(uuid())
+  merchant        String
+  category        String
+  discount        Int
+  discountType    String
+  description     String
+  banksJson       String
+  cardTypesJson   String
+  tiersJson       String
+  citiesJson      String
+  logo            String
+  banner          String
+  validFrom       String
+  validTo         String
+  termsJson       String
+  featured        Boolean  @default(false)
+  trending        Boolean  @default(false)
+  merchantColor   String   @default("#007AFF")
+  merchantInitial String   @default("M")
+  createdAt       DateTime @default(now())
+}
+
+model Group {
+  id        String   @id @default(uuid())
+  name      String
+  icon      String   @default("👨‍👩‍👧‍👦")
+  color     String   @default("rgba(0, 122, 255, 0.12)")
+  createdAt DateTime @default(now())
+
+  members GroupMember[]
+}
+
+model GroupMember {
+  id        String @id @default(uuid())
+  groupId   String
+  userId    String
+  userName  String
+  cardsJson String
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      String
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model FollowedMerchant {
+  id           String   @id @default(uuid())
+  userId       String
+  merchantName String
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AdminSettings {
+  id            String   @id @default("admin_settings")
+  adminPassword String   @default("Qwerty123!@#")
+  smtpHost      String   @default("")
+  smtpPort      Int      @default(587)
+  smtpUser      String   @default("")
+  smtpPass      String   @default("")
+  smtpFrom      String   @default("")
+  smtpEnabled   Boolean  @default(false)
+  updatedAt     DateTime @updatedAt
+}
