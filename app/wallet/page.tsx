@@ -1,106 +1,102 @@
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import { fallbackBanks } from '@/lib/fallbackData';
+import BankBadge from '@/components/BankBadge';
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function WalletPage() {
-  const user = await prisma.user.findFirst({
-    where: { email: 'user@cardsaver.pk' },
-    include: { cards: true },
-  });
+  let user: any = null;
+  let allBanks: any[] = [];
 
-  const banks = await prisma.bank.findMany();
-  const userCards = user?.cards || [];
+  try {
+    user = await prisma.user.findFirst({
+      where: { email: 'user@cardsaver.pk' },
+      include: { cards: true }
+    });
+  } catch (e) {
+    user = null;
+  }
 
-  const allDeals = await prisma.deal.findMany();
-  const userBankIds = userCards.map(c => c.bank);
+  try {
+    allBanks = await prisma.bank.findMany();
+  } catch (e) {
+    allBanks = [];
+  }
+  if (!allBanks || allBanks.length === 0) allBanks = fallbackBanks;
 
-  const matchingDeals = allDeals.filter(deal => {
-    try {
-      const bArr: string[] = JSON.parse(deal.banksJson);
-      return bArr.some(b => userBankIds.includes(b));
-    } catch {
-      return false;
-    }
-  });
+  const cards = user?.cards || [
+    { id: 'c1', bank: 'hbl', bankName: 'Habib Bank Limited', type: 'Credit Card', tier: 'Gold', last4: '8821', isDefault: true },
+    { id: 'c2', bank: 'sadapay', bankName: 'SadaPay', type: 'Debit Card', tier: 'Classic', last4: '1042', isDefault: false },
+    { id: 'c3', bank: 'meezan', bankName: 'Meezan Bank', type: 'Debit Card', tier: 'Titanium', last4: '5590', isDefault: false }
+  ];
 
   return (
     <div className="page-enter" style={{ paddingBottom: 'var(--space-12)' }}>
       <div className="section-header">
         <h1 className="app-header__title" style={{ fontSize: '24px' }}>
-          My Card Wallet ({userCards.length})
+          💳 Card Wallet ({cards.length})
         </h1>
+        <Link href="/deals" className="btn btn--ghost btn--sm">
+          Browse Deals ➔
+        </Link>
       </div>
 
-      {/* Wallet Metric Cards */}
-      <div className="wallet-page__stats">
-        <div className="stat-card">
-          <div className="stat-card__value">{userCards.length}</div>
-          <div className="stat-card__label">Active Cards</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__value" style={{ color: 'var(--accent-green)' }}>
-            {matchingDeals.length}
-          </div>
-          <div className="stat-card__label">Matching Deals</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card__value" style={{ color: 'var(--accent-blue)' }}>
-            30+
-          </div>
-          <div className="stat-card__label">Supported Banks</div>
-        </div>
-      </div>
-
-      {/* Cards List */}
-      <div className="wallet-page__cards">
-        {userCards.length > 0 ? (
-          userCards.map((c) => (
-            <div key={c.id} className="wallet-page__card-wrapper stagger-in">
-              <div className={`bank-card bank-card--${c.bank}`}>
-                <div className="bank-card__header">
-                  <div className="bank-card__bank-name">{c.bankName}</div>
-                  <div className="bank-card__chip" />
-                </div>
-                <div className="bank-card__number">•••• •••• •••• {c.last4}</div>
-                <div className="bank-card__footer">
-                  <div>
-                    <div className="bank-card__name">ALI HASSAN</div>
-                    <span className="card-tier-badge" style={{ background: 'rgba(255,255,255,0.25)', color: 'white' }}>
-                      {c.tier}
-                    </span>
-                  </div>
-                  <div className="bank-card__type">{c.type}</div>
-                </div>
+      {/* User Added Cards Stack */}
+      <div style={{ padding: '0 var(--space-5)', marginBottom: 'var(--space-6)' }} className="flex flex-col gap-4">
+        {cards.map((card: any) => (
+          <div key={card.id} className={`bank-card bank-card--${card.bank}`}>
+            <div className="flex-between align-center">
+              <BankBadge bankId={card.bank} size="md" />
+              <div className="text-xs font-bold uppercase" style={{ opacity: 0.9 }}>
+                {card.type} • {card.tier}
               </div>
             </div>
-          ))
-        ) : (
-          <div className="empty-state">
-            <div className="empty-state__icon">💳</div>
-            <div className="empty-state__title">Your Wallet is Empty</div>
-            <div className="empty-state__text">
-              Add your Pakistani bank credit or debit cards (HBL, UBL, Meezan, SadaPay, NayaPay, Easypaisa) to unlock exclusive savings!
+
+            <div style={{ margin: 'var(--space-4) 0' }}>
+              <div className="text-xs" style={{ opacity: 0.8, letterSpacing: '1px' }}>CARD NUMBER</div>
+              <div style={{ fontSize: '20px', fontWeight: 'bold', letterSpacing: '3px' }}>
+                •••• •••• •••• {card.last4}
+              </div>
+            </div>
+
+            <div className="flex-between align-center">
+              <div>
+                <div className="text-xs" style={{ opacity: 0.8 }}>CARDHOLDER</div>
+                <div className="font-semibold text-sm">{user?.name || 'Ali Hassan'}</div>
+              </div>
+              {card.isDefault && (
+                <div className="badge" style={{ background: 'rgba(255,255,255,0.3)', color: 'white' }}>
+                  ⭐ Primary Card
+                </div>
+              )}
             </div>
           </div>
-        )}
+        ))}
       </div>
 
-      {/* Supported Banks Quick Selector */}
-      <div className="section-header">
-        <div className="section-header__title">Available Bank Partners</div>
-      </div>
-      <div className="scroll-h stagger-in mb-6">
-        {banks.map((b) => (
-          <Link
-            key={b.id}
-            href={`/deals?bank=${b.id}`}
-            className="chip active"
-            style={{ backgroundColor: b.color, color: 'white' }}
-          >
-            {b.name}
-          </Link>
-        ))}
+      {/* Add New Bank Card Section */}
+      <div style={{ padding: '0 var(--space-5)' }}>
+        <div className="card card--glass p-5">
+          <h2 style={{ fontSize: '18px', marginBottom: 'var(--space-2)' }}>
+            ➕ Select & Add Partner Card
+          </h2>
+          <p className="text-sm text-secondary mb-4">
+            Select a bank or digital wallet to instantly unlock personalized deals!
+          </p>
+
+          <div className="flex flex-wrap gap-2">
+            {allBanks.map((b: any) => (
+              <span
+                key={b.id}
+                className="chip active"
+                style={{ background: b.color, color: 'white', cursor: 'pointer', padding: '8px 12px' }}
+              >
+                💳 {b.name}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

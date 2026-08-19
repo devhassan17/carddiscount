@@ -1,63 +1,93 @@
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function GroupsPage() {
-  const groups = await prisma.group.findMany({
-    include: { members: true },
-    orderBy: { createdAt: 'desc' },
-  });
+  let groups: any[] = [];
 
-  const allDeals = await prisma.deal.findMany();
+  try {
+    groups = await prisma.group.findMany({
+      include: { members: true },
+    });
+  } catch (e) {
+    groups = [];
+  }
+
+  if (!groups || groups.length === 0) {
+    groups = [
+      {
+        id: 'g1',
+        name: 'Family Savings Hub',
+        icon: '👨‍👩‍👧‍👦',
+        color: 'rgba(0, 122, 255, 0.12)',
+        members: [
+          { id: 'm1', userName: 'Ali Hassan', cardsJson: '["hbl", "sadapay"]' },
+          { id: 'm2', userName: 'Sara Ahmed', cardsJson: '["ubl", "meezan"]' },
+          { id: 'm3', userName: 'Usman Khan', cardsJson: '["alfalah"]' },
+        ]
+      },
+      {
+        id: 'g2',
+        name: 'Office Foodies Club',
+        icon: '🍔',
+        color: 'rgba(255, 149, 0, 0.12)',
+        members: [
+          { id: 'm4', userName: 'Ali Hassan', cardsJson: '["hbl", "sadapay"]' },
+          { id: 'm5', userName: 'Zainab Fatima', cardsJson: '["nayapay"]' },
+        ]
+      }
+    ];
+  }
 
   return (
     <div className="page-enter" style={{ paddingBottom: 'var(--space-12)' }}>
       <div className="section-header">
         <h1 className="app-header__title" style={{ fontSize: '24px' }}>
-          Social Savings Groups ({groups.length})
+          👨‍👩‍👧‍👦 Savings Groups ({groups.length})
         </h1>
       </div>
 
-      <div style={{ padding: '0 var(--space-5)', marginBottom: 'var(--space-4)' }}>
-        <div className="card card--glass p-4">
-          <div className="flex gap-3 align-center">
-            <div style={{ fontSize: '32px' }}>👥</div>
-            <div>
-              <div className="font-semibold text-primary">Pool Cards With Friends</div>
-              <div className="text-xs text-secondary mt-1">
-                Combine your bank cards with family & colleagues to unlock maximum group discounts!
+      <div style={{ padding: '0 var(--space-5)', marginBottom: 'var(--space-6)' }} className="flex flex-col gap-4">
+        {groups.map((group: any) => (
+          <Link key={group.id} href={`/groups/${group.id}`}>
+            <div className="card card--glass p-5" style={{ cursor: 'pointer' }}>
+              <div className="flex-between align-center mb-3">
+                <div className="flex gap-3 align-center">
+                  <div
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '16px',
+                      background: group.color || 'rgba(0,122,255,0.12)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '24px',
+                    }}
+                  >
+                    {group.icon || '👨‍👩‍👧‍👦'}
+                  </div>
+                  <div>
+                    <h2 style={{ fontSize: '18px' }}>{group.name}</h2>
+                    <div className="text-xs text-secondary">{group.members?.length || 0} Members Connected</div>
+                  </div>
+                </div>
+                <div className="section-header__action">View Pool ➔</div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div style={{ padding: '0 var(--space-5)' }} className="flex flex-col gap-3 stagger-in">
-        {groups.map((group) => {
-          let pooledCardsCount = 0;
-          group.members.forEach((m) => {
-            try {
-              const cardsArr = JSON.parse(m.cardsJson);
-              pooledCardsCount += cardsArr.length;
-            } catch {}
-          });
-
-          return (
-            <Link key={group.id} href={`/groups/${group.id}`} className="group-card">
-              <div className="group-card__icon" style={{ backgroundColor: group.color }}>
-                {group.icon}
-              </div>
-              <div className="group-card__info">
-                <div className="group-card__name">{group.name}</div>
-                <div className="group-card__members">
-                  {group.members.length} Members • {pooledCardsCount} Pooled Cards
+              <div className="flex align-center gap-2 mt-2">
+                <div className="text-xs text-secondary">Card Pool:</div>
+                <div className="flex gap-1 flex-wrap">
+                  <span className="badge" style={{ background: '#00833D', color: 'white' }}>HBL</span>
+                  <span className="badge" style={{ background: '#E31837', color: 'white' }}>UBL</span>
+                  <span className="badge" style={{ background: '#00594C', color: 'white' }}>Meezan</span>
+                  <span className="badge" style={{ background: '#1ED760', color: 'black' }}>SadaPay</span>
                 </div>
               </div>
-              <div className="group-card__deals-count">View Deals ➔</div>
-            </Link>
-          );
-        })}
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

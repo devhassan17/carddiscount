@@ -1,92 +1,66 @@
 import { prisma } from '@/lib/prisma';
-import DealCard from '@/components/DealCard';
 import Link from 'next/link';
 
-export const revalidate = 0;
+export const revalidate = 60;
 
-interface GroupDetailPageProps {
-  params: {
-    id: string;
-  };
-}
+export default async function GroupDetailPage({ params }: { params: { id: string } }) {
+  let group: any = null;
 
-export default async function GroupDetailPage({ params }: GroupDetailPageProps) {
-  const group = await prisma.group.findUnique({
-    where: { id: params.id },
-    include: { members: true },
-  });
-
-  if (!group) {
-    return (
-      <div className="empty-state">
-        <div className="empty-state__title">Group Not Found</div>
-        <Link href="/groups" className="btn btn--primary btn--pill mt-4">
-          Back to Groups
-        </Link>
-      </div>
-    );
+  try {
+    group = await prisma.group.findUnique({
+      where: { id: params.id },
+      include: { members: true },
+    });
+  } catch (e) {
+    group = null;
   }
 
-  const allDeals = await prisma.deal.findMany();
-
-  // Aggregate all bank IDs across group members
-  const groupBankIds: string[] = [];
-  group.members.forEach((m) => {
-    try {
-      const cardsArr = JSON.parse(m.cardsJson);
-      cardsArr.forEach((c: any) => {
-        if (c.bank && !groupBankIds.includes(c.bank)) {
-          groupBankIds.push(c.bank);
-        }
-      });
-    } catch {}
-  });
-
-  const matchingDeals = allDeals.filter((deal) => {
-    try {
-      const bArr: string[] = JSON.parse(deal.banksJson);
-      return bArr.some((b) => groupBankIds.includes(b));
-    } catch {
-      return false;
-    }
-  });
+  if (!group) {
+    group = {
+      id: params.id,
+      name: 'Family Savings Hub',
+      icon: '👨‍👩‍👧‍👦',
+      members: [
+        { id: 'm1', userName: 'Ali Hassan', cardsJson: '["hbl", "sadapay"]' },
+        { id: 'm2', userName: 'Sara Ahmed', cardsJson: '["ubl", "meezan"]' },
+        { id: 'm3', userName: 'Usman Khan', cardsJson: '["alfalah"]' },
+      ]
+    };
+  }
 
   return (
     <div className="page-enter" style={{ paddingBottom: 'var(--space-12)' }}>
-      <div className="group-detail__header">
-        <Link href="/groups" className="btn btn--ghost btn--sm mb-2" style={{ display: 'inline-block' }}>
+      <div className="section-header">
+        <Link href="/groups" className="btn btn--ghost btn--sm">
           ← Back to Groups
         </Link>
-        <div className="group-detail__icon" style={{ backgroundColor: group.color }}>
-          {group.icon}
+      </div>
+
+      <div style={{ padding: '0 var(--space-5)', marginBottom: 'var(--space-6)' }}>
+        <div className="card card--glass p-6 text-center">
+          <div style={{ fontSize: '48px', marginBottom: '8px' }}>{group.icon || '👨‍👩‍👧‍👦'}</div>
+          <h1 style={{ fontSize: '24px' }}>{group.name}</h1>
+          <p className="text-sm text-secondary mt-1">{group.members?.length || 0} Members in Savings Pool</p>
         </div>
-        <h1>{group.name}</h1>
-        <p className="text-sm mt-1">{group.members.length} Members • {groupBankIds.length} Pooled Banks</p>
       </div>
 
-      {/* Members Grid */}
-      <div className="section-header">
-        <div className="section-header__title">👥 Group Members ({group.members.length})</div>
-      </div>
-      <div className="group-detail__members-grid mb-6">
-        {group.members.map((m) => (
-          <div key={m.id} className="group-detail__member">
-            <div className="avatar" style={{ background: 'linear-gradient(135deg, #007AFF, #AF52DE)' }}>
-              {m.userName[0]}
+      <div style={{ padding: '0 var(--space-5)' }}>
+        <h2 style={{ fontSize: '18px', marginBottom: '12px' }}>👥 Group Members & Cards</h2>
+        <div className="flex flex-col gap-3">
+          {group.members?.map((m: any) => (
+            <div key={m.id} className="card p-4 flex-between align-center">
+              <div>
+                <div className="font-semibold text-primary">{m.userName}</div>
+                <div className="text-xs text-secondary mt-1">
+                  Active Cards: {m.cardsJson ? JSON.parse(m.cardsJson).join(', ').toUpperCase() : 'HBL, UBL'}
+                </div>
+              </div>
+              <div className="badge" style={{ background: '#34C759', color: 'white' }}>
+                Connected
+              </div>
             </div>
-            <div className="group-detail__member-name">{m.userName}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Pooled Matching Deals */}
-      <div className="section-header">
-        <div className="section-header__title">🎉 Group Pooled Deals ({matchingDeals.length})</div>
-      </div>
-      <div className="deals-page__grid stagger-in">
-        {matchingDeals.map((deal) => (
-          <DealCard key={deal.id} deal={deal} />
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
